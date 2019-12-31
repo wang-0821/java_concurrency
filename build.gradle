@@ -1,0 +1,58 @@
+group 'com.xiao'
+version '1.0.0'
+apply from: rootProject.file("gradle/dependency.gradle")
+// plugins
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+// jvm version
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildDir = "out/output"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+dependencies {
+    compile libs['commons-lang']
+    compile libs['validation-api']
+    compile libs['commons-collections4']
+    // log4j2
+    compile libs['log4j-api']
+    compile libs['log4j-core']
+    // lombok
+    compileOnly libs['lombok']
+    annotationProcessor libs['lombok']
+    testCompileOnly libs['lombok']
+    testAnnotationProcessor libs['lombok']
+    // test
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// 生成source源码包
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier 'sources'
+}
+
+artifacts {
+    archives sourceJar
+}
+
+// 执行自定义gradle wrapper task 自动生成gradlew脚本及配置，这里指定下载的Gradle版本
+task gradleWrapper(type: Wrapper) {
+    gradleVersion = '4.0.1'
+}
